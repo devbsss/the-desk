@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useTrades } from "@/contexts/TradesContext";
 import { formatCurrency, formatDate } from "@/lib/trading";
-import { Download, ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { Download, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function Historico() {
   const { trades } = useTrades();
@@ -30,34 +30,13 @@ export default function Historico() {
 
   const exportCSV = () => {
     const headers = [
-      "Data",
-      "Horário",
-      "Ativo",
-      "Direção",
-      "Entrada",
-      "Stop",
-      "Alvo",
-      "Contratos",
-      "Resultado",
-      "P&L",
-      "Seguiu Plano",
-      "Motivo",
-      "Erros",
-      "Observações",
+      "Data", "Horário", "Ativo", "Direção", "Entrada", "Stop", "Alvo",
+      "Contratos", "Resultado", "P&L", "Seguiu Plano", "Motivo", "Erros", "Observações",
     ];
 
     const rows = filteredTrades.map((t) => [
-      t.date,
-      t.entryTime,
-      t.asset,
-      t.direction,
-      t.entryPrice,
-      t.stopPrice,
-      t.targetPrice,
-      t.contracts,
-      t.result,
-      t.pnl,
-      t.followedPlan ? "Sim" : "Não",
+      t.date, t.entryTime, t.asset, t.direction, t.entryPrice, t.stopPrice,
+      t.targetPrice, t.contracts, t.result, t.pnl, t.followedPlan ? "Sim" : "Não",
       `"${t.entryReason.replace(/"/g, '""')}"`,
       `"${t.errors.replace(/"/g, '""')}"`,
       `"${t.observations.replace(/"/g, '""')}"`,
@@ -74,32 +53,33 @@ export default function Historico() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in">
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in-up">
         <div>
-          <h1 className="text-lg font-bold font-['Space_Mono'] text-[#E8E8E8]">
-            Histórico
+          <h1 className="font-mono-title text-lg font-semibold text-[var(--text-primary)]">
+            HISTÓRICO
           </h1>
-          <p className="text-[12px] text-[#666666] font-['JetBrains_Mono']">
+          <p className="font-mono-title text-[11px] text-[var(--text-muted)]">
             {filteredTrades.length} trade{filteredTrades.length !== 1 ? "s" : ""} encontrado{filteredTrades.length !== 1 ? "s" : ""}
           </p>
         </div>
         <button
           onClick={exportCSV}
           disabled={filteredTrades.length === 0}
-          className="flex items-center gap-2 bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-4 py-2 text-[12px] text-[#E8E8E8] font-['JetBrains_Mono'] hover:border-[#2A2A2A] active:scale-[0.97] transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="td-btn flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          <Download size={14} />
-          Exportar CSV
+          <Download size={13} />
+          EXPORTAR CSV
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3 animate-fade-in" style={{ animationDelay: "50ms" }}>
+      <div className="flex flex-wrap gap-3 animate-fade-in-up stagger-2">
         <select
           value={filterAsset}
           onChange={(e) => setFilterAsset(e.target.value as any)}
-          className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2 text-[12px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none"
+          className="td-input w-auto"
         >
           <option value="ALL">Todos Ativos</option>
           <option value="MES">MES</option>
@@ -108,7 +88,7 @@ export default function Historico() {
         <select
           value={filterResult}
           onChange={(e) => setFilterResult(e.target.value as any)}
-          className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2 text-[12px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none"
+          className="td-input w-auto"
         >
           <option value="ALL">Todos Resultados</option>
           <option value="WIN">WIN</option>
@@ -119,7 +99,7 @@ export default function Historico() {
           type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
-          className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2 text-[12px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none"
+          className="td-input w-auto"
         />
         {(filterAsset !== "ALL" || filterResult !== "ALL" || filterDate) && (
           <button
@@ -128,7 +108,7 @@ export default function Historico() {
               setFilterResult("ALL");
               setFilterDate("");
             }}
-            className="text-[11px] text-[#666666] hover:text-[#999999] font-['JetBrains_Mono'] transition-colors"
+            className="font-mono-title text-[11px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
           >
             Limpar filtros
           </button>
@@ -136,10 +116,10 @@ export default function Historico() {
       </div>
 
       {/* Trade List */}
-      <div className="space-y-2 animate-fade-in" style={{ animationDelay: "100ms" }}>
+      <div className="space-y-2">
         {filteredTrades.length === 0 ? (
-          <div className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md p-8 text-center">
-            <p className="text-[#444444] text-[12px] font-['JetBrains_Mono']">
+          <div className="td-card p-8 text-center">
+            <p className="font-sans-body text-[13px] text-[var(--text-muted)]">
               {trades.length === 0
                 ? "Nenhum trade registrado ainda."
                 : "Nenhum trade encontrado com esses filtros."}
@@ -149,33 +129,33 @@ export default function Historico() {
           filteredTrades.map((trade) => (
             <div
               key={trade.id}
-              className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md overflow-hidden"
+              className="td-card !p-0 overflow-hidden"
             >
               <button
                 onClick={() => setExpandedId(expandedId === trade.id ? null : trade.id)}
-                className="w-full flex items-center justify-between p-4 hover:bg-[#111111] transition-colors"
+                className="w-full flex items-center justify-between p-4 hover:bg-[var(--bg-hover)] transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <span className="text-[11px] text-[#666666] font-['JetBrains_Mono']">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <span className="font-mono-title text-[11px] text-[var(--text-muted)]">
                     {formatDate(trade.date)}
                   </span>
-                  <span className="text-[12px] text-[#E8E8E8] font-['Space_Mono'] font-bold">
+                  <span className="font-mono-title text-[11px] text-[var(--text-primary)] font-medium">
                     {trade.asset}
                   </span>
                   <span
-                    className={`text-[11px] font-['JetBrains_Mono'] ${
-                      trade.direction === "LONG" ? "text-[#26A69A]" : "text-[#EF5350]"
+                    className={`font-mono-title text-[11px] font-medium ${
+                      trade.direction === "LONG" ? "text-[var(--green)]" : "text-[var(--red)]"
                     }`}
                   >
                     {trade.direction}
                   </span>
                   <span
-                    className={`text-[12px] font-bold font-['Space_Mono'] ${
+                    className={`font-mono-title text-[11px] font-semibold ${
                       trade.result === "WIN"
-                        ? "text-[#26A69A]"
+                        ? "text-[var(--green)]"
                         : trade.result === "LOSS"
-                        ? "text-[#EF5350]"
-                        : "text-[#666666]"
+                        ? "text-[var(--red)]"
+                        : "text-[var(--text-muted)]"
                     }`}
                   >
                     {trade.result}
@@ -183,76 +163,60 @@ export default function Historico() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span
-                    className={`text-[13px] font-bold font-['Space_Mono'] ${
-                      trade.pnl >= 0 ? "text-[#26A69A]" : "text-[#EF5350]"
+                    className={`font-mono-title text-[12px] font-semibold ${
+                      trade.pnl >= 0 ? "pnl-positive" : "pnl-negative"
                     }`}
                   >
                     {formatCurrency(trade.pnl)}
                   </span>
                   {expandedId === trade.id ? (
-                    <ChevronUp size={14} className="text-[#666666]" />
+                    <ChevronUp size={14} className="text-[var(--text-muted)]" />
                   ) : (
-                    <ChevronDown size={14} className="text-[#666666]" />
+                    <ChevronDown size={14} className="text-[var(--text-muted)]" />
                   )}
                 </div>
               </button>
 
               {expandedId === trade.id && (
-                <div className="border-t border-[#1E1E1E] p-4 space-y-3 bg-[#080808]">
+                <div className="border-t border-[var(--border-color)] p-4 space-y-3 bg-[var(--bg-base)]">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Entrada
-                      </span>
-                      <p className="text-[12px] text-[#E8E8E8] font-['JetBrains_Mono']">
+                      <span className="td-label !mb-0.5">Entrada</span>
+                      <p className="font-mono-title text-[12px] text-[var(--text-primary)]">
                         {trade.entryPrice} @ {trade.entryTime}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Stop
-                      </span>
-                      <p className="text-[12px] text-[#EF5350] font-['JetBrains_Mono']">
+                      <span className="td-label !mb-0.5">Stop</span>
+                      <p className="font-mono-title text-[12px] text-[var(--red)]">
                         {trade.stopPrice}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Alvo
-                      </span>
-                      <p className="text-[12px] text-[#26A69A] font-['JetBrains_Mono']">
+                      <span className="td-label !mb-0.5">Alvo</span>
+                      <p className="font-mono-title text-[12px] text-[var(--green)]">
                         {trade.targetPrice}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Contratos
-                      </span>
-                      <p className="text-[12px] text-[#E8E8E8] font-['JetBrains_Mono']">
+                      <span className="td-label !mb-0.5">Contratos</span>
+                      <p className="font-mono-title text-[12px] text-[var(--text-primary)]">
                         {trade.contracts}
                       </p>
                     </div>
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                      Motivo
-                    </span>
-                    <p className="text-[12px] text-[#C8C8C8] font-['JetBrains_Mono'] mt-0.5">
+                    <span className="td-label !mb-0.5">Motivo</span>
+                    <p className="font-sans-body text-[12px] text-[var(--td-accent)]">
                       {trade.entryReason}
                     </p>
                   </div>
 
                   <div className="flex gap-4">
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Seguiu Plano
-                      </span>
-                      <p
-                        className={`text-[12px] font-['JetBrains_Mono'] ${
-                          trade.followedPlan ? "text-[#26A69A]" : "text-[#EF5350]"
-                        }`}
-                      >
+                      <span className="td-label !mb-0.5">Seguiu Plano</span>
+                      <p className={`font-mono-title text-[12px] ${trade.followedPlan ? "text-[var(--green)]" : "text-[var(--red)]"}`}>
                         {trade.followedPlan ? "Sim" : "Não"}
                       </p>
                     </div>
@@ -260,10 +224,8 @@ export default function Historico() {
 
                   {trade.errors && (
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Erros
-                      </span>
-                      <p className="text-[12px] text-[#EF5350]/80 font-['JetBrains_Mono'] mt-0.5">
+                      <span className="td-label !mb-0.5">Erros</span>
+                      <p className="font-sans-body text-[12px] text-[var(--red)]">
                         {trade.errors}
                       </p>
                     </div>
@@ -271,10 +233,8 @@ export default function Historico() {
 
                   {trade.observations && (
                     <div>
-                      <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-                        Observações
-                      </span>
-                      <p className="text-[12px] text-[#999999] font-['JetBrains_Mono'] mt-0.5">
+                      <span className="td-label !mb-0.5">Observações</span>
+                      <p className="font-sans-body text-[12px] text-[var(--text-secondary)]">
                         {trade.observations}
                       </p>
                     </div>

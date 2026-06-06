@@ -1,13 +1,15 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useTrades } from "@/contexts/TradesContext";
-import { getTodayPnL } from "@/lib/trading";
+import { getTodayPnL, getRandomFocusQuote } from "@/lib/trading";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 
+const focusQuote = getRandomFocusQuote();
+
 export default function NovoTrade() {
-  const { trades, sessions, addTrade, addSession, getTodaySession, getTodayTrades, updateSession } = useTrades();
+  const { trades, addTrade, addSession, getTodaySession, getTodayTrades, updateSession } = useTrades();
   const [, navigate] = useLocation();
 
   const todaySession = getTodaySession();
@@ -81,7 +83,6 @@ export default function NovoTrade() {
       observations: tradeForm.observations,
     });
 
-    // Check if day should end
     const newPnL = todayPnL + (tradeForm.result === "LOSS" ? -Math.abs(tradeForm.pnl) : Math.abs(tradeForm.pnl));
     const newTradeCount = todayTrades.length + 1;
 
@@ -95,26 +96,29 @@ export default function NovoTrade() {
     navigate("/");
   };
 
-  // If day is ended, show message
+  const inputClass = "td-input";
+  const labelClass = "td-label";
+
+  // If day is ended
   if (isDayEnded && todaySession) {
     return (
       <div className="space-y-6">
         <Link href="/">
-          <button className="flex items-center gap-2 text-[#666666] hover:text-[#999999] text-[13px] font-['JetBrains_Mono'] transition-colors">
+          <button className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-[12px] font-mono-title transition-colors">
             <ArrowLeft size={14} />
-            Voltar ao Dashboard
+            VOLTAR
           </button>
         </Link>
-        <div className="bg-[#0D0D0D] border border-[#EF5350]/30 rounded-md p-8 text-center animate-fade-in">
-          <div className="text-[#EF5350] text-lg font-bold font-['Space_Mono'] mb-2">
+        <div className="td-card border-[var(--red)]! p-8 text-center animate-fade-in-up">
+          <div className="text-[var(--red)] text-lg font-semibold font-mono-title mb-2">
             DIA ENCERRADO
           </div>
-          <p className="text-[#666666] text-[13px] font-['JetBrains_Mono']">
+          <p className="font-sans-body text-[13px] text-[var(--text-secondary)]">
             {todayTrades.length >= 2
               ? "Máximo de 2 trades atingido."
               : "Limite de loss diário atingido."}
           </p>
-          <p className="text-[#444444] text-[11px] font-['JetBrains_Mono'] mt-4">
+          <p className="font-mono-title text-[11px] text-[var(--text-muted)] mt-4">
             Descanse. Amanhã é um novo dia.
           </p>
         </div>
@@ -122,48 +126,44 @@ export default function NovoTrade() {
     );
   }
 
-  // If no session today, show session form
+  // If no session today
   if (!todaySession) {
     return (
       <div className="space-y-6">
         <Link href="/">
-          <button className="flex items-center gap-2 text-[#666666] hover:text-[#999999] text-[13px] font-['JetBrains_Mono'] transition-colors">
+          <button className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-[12px] font-mono-title transition-colors">
             <ArrowLeft size={14} />
-            Voltar ao Dashboard
+            VOLTAR
           </button>
         </Link>
 
-        <div className="animate-fade-in">
-          <h1 className="text-lg font-bold font-['Space_Mono'] text-[#E8E8E8] mb-1">
-            Iniciar Sessão do Dia
+        <div className="animate-fade-in-up">
+          <h1 className="font-mono-title text-lg font-semibold text-[var(--text-primary)] mb-1">
+            INICIAR SESSÃO
           </h1>
-          <p className="text-[12px] text-[#666666] font-['JetBrains_Mono'] mb-6">
+          <p className="font-mono-title text-[11px] text-[var(--text-muted)] mb-6">
             Preencha antes de começar a operar.
           </p>
 
           <form onSubmit={handleCreateSession} className="space-y-4 max-w-lg">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Data
-                </label>
+                <label className={labelClass}>Data</label>
                 <input
                   type="date"
                   value={sessionForm.date}
                   onChange={(e) => setSessionForm({ ...sessionForm, date: e.target.value })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                   required
                 />
               </div>
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Horário Início
-                </label>
+                <label className={labelClass}>Horário Início</label>
                 <input
                   type="time"
                   value={sessionForm.startTime}
                   onChange={(e) => setSessionForm({ ...sessionForm, startTime: e.target.value })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                   required
                 />
               </div>
@@ -171,26 +171,22 @@ export default function NovoTrade() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Ativo
-                </label>
+                <label className={labelClass}>Ativo</label>
                 <select
                   value={sessionForm.asset}
                   onChange={(e) => setSessionForm({ ...sessionForm, asset: e.target.value as "MES" | "MNQ" })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                 >
                   <option value="MES">MES</option>
                   <option value="MNQ">MNQ</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Sono
-                </label>
+                <label className={labelClass}>Sono</label>
                 <select
                   value={sessionForm.sleep}
                   onChange={(e) => setSessionForm({ ...sessionForm, sleep: e.target.value as any })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                 >
                   <option value="< 4h">{"< 4h"}</option>
                   <option value="4–6h">4–6h</option>
@@ -202,13 +198,11 @@ export default function NovoTrade() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Humor
-                </label>
+                <label className={labelClass}>Humor</label>
                 <select
                   value={sessionForm.mood}
                   onChange={(e) => setSessionForm({ ...sessionForm, mood: e.target.value as any })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                 >
                   <option value="Calmo">Calmo</option>
                   <option value="Ansioso">Ansioso</option>
@@ -217,50 +211,44 @@ export default function NovoTrade() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                  Saldo Inicial ($)
-                </label>
+                <label className={labelClass}>Saldo Inicial ($)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={sessionForm.initialBalance || ""}
                   onChange={(e) => setSessionForm({ ...sessionForm, initialBalance: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                  className={inputClass}
                   placeholder="25000"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Loss Máximo do Dia ($)
-              </label>
+              <label className={labelClass}>Loss Máximo do Dia ($)</label>
               <input
                 type="number"
                 step="0.01"
                 value={sessionForm.maxDailyLoss || ""}
                 onChange={(e) => setSessionForm({ ...sessionForm, maxDailyLoss: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors max-w-[200px]"
+                className={`${inputClass} max-w-[200px]`}
                 placeholder="100"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Plano do Dia
-              </label>
+              <label className={labelClass}>Plano do Dia</label>
               <textarea
                 value={sessionForm.dayPlan}
                 onChange={(e) => setSessionForm({ ...sessionForm, dayPlan: e.target.value })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors min-h-[80px] resize-none"
+                className={`${inputClass} min-h-[80px] resize-none`}
                 placeholder="Descreva seu plano para hoje..."
               />
             </div>
 
             <button
               type="submit"
-              className="bg-[#E8E8E8] text-[#000000] font-['Space_Mono'] font-bold text-sm px-6 py-3 rounded-md hover:bg-[#FFFFFF] active:scale-[0.97] transition-all duration-150 w-full sm:w-auto"
+              className="td-btn w-full sm:w-auto bg-[var(--text-primary)] text-[var(--bg-base)] hover:bg-[var(--white)]"
             >
               INICIAR SESSÃO
             </button>
@@ -274,49 +262,48 @@ export default function NovoTrade() {
   return (
     <div className="space-y-6">
       <Link href="/">
-        <button className="flex items-center gap-2 text-[#666666] hover:text-[#999999] text-[13px] font-['JetBrains_Mono'] transition-colors">
+        <button className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-[12px] font-mono-title transition-colors">
           <ArrowLeft size={14} />
-          Voltar ao Dashboard
+          VOLTAR
         </button>
       </Link>
 
-      <div className="animate-fade-in">
-        <h1 className="text-lg font-bold font-['Space_Mono'] text-[#E8E8E8] mb-1">
-          Registrar Trade
+      <div className="animate-fade-in-up">
+        <h1 className="font-mono-title text-lg font-semibold text-[var(--text-primary)] mb-1">
+          REGISTRAR TRADE
         </h1>
-        <p className="text-[12px] text-[#666666] font-['JetBrains_Mono'] mb-1">
-          Trade {todayTrades.length + 1} de 2 • {todaySession.asset}
+        <p className="font-mono-title text-[11px] text-[var(--text-secondary)] mb-1">
+          Trade {todayTrades.length + 1} de 2 · {todaySession.asset}
         </p>
-        <p className="text-[11px] text-[#444444] font-['JetBrains_Mono'] mb-6">
-          Sessão: {todaySession.date} • Humor: {todaySession.mood} • Sono: {todaySession.sleep}
+        <p className="font-mono-title text-[10px] text-[var(--text-muted)] mb-2">
+          Sessão: {todaySession.date} · Humor: {todaySession.mood} · Sono: {todaySession.sleep}
+        </p>
+        <p className="font-sans-body text-[12px] text-[var(--text-secondary)] italic mb-6">
+          "{focusQuote}"
         </p>
 
         <form onSubmit={handleSubmitTrade} className="space-y-4 max-w-lg">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Horário Entrada
-              </label>
+              <label className={labelClass}>Horário Entrada</label>
               <input
                 type="time"
                 value={tradeForm.entryTime}
                 onChange={(e) => setTradeForm({ ...tradeForm, entryTime: e.target.value })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                className={inputClass}
                 required
               />
             </div>
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Direção
-              </label>
+              <label className={labelClass}>Direção</label>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setTradeForm({ ...tradeForm, direction: "LONG" })}
-                  className={`flex-1 py-2.5 rounded-md text-[12px] font-bold font-['Space_Mono'] border transition-colors ${
+                  className={`flex-1 py-2.5 text-[12px] font-semibold font-mono-title border transition-colors ${
                     tradeForm.direction === "LONG"
-                      ? "bg-[#26A69A]/10 border-[#26A69A] text-[#26A69A]"
-                      : "bg-[#0D0D0D] border-[#1E1E1E] text-[#666666] hover:border-[#2A2A2A]"
+                      ? "bg-[var(--green-dim)] border-[var(--green)] text-[var(--green)]"
+                      : "bg-[var(--bg-base)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-[var(--border-bright)]"
                   }`}
                 >
                   LONG
@@ -324,10 +311,10 @@ export default function NovoTrade() {
                 <button
                   type="button"
                   onClick={() => setTradeForm({ ...tradeForm, direction: "SHORT" })}
-                  className={`flex-1 py-2.5 rounded-md text-[12px] font-bold font-['Space_Mono'] border transition-colors ${
+                  className={`flex-1 py-2.5 text-[12px] font-semibold font-mono-title border transition-colors ${
                     tradeForm.direction === "SHORT"
-                      ? "bg-[#EF5350]/10 border-[#EF5350] text-[#EF5350]"
-                      : "bg-[#0D0D0D] border-[#1E1E1E] text-[#666666] hover:border-[#2A2A2A]"
+                      ? "bg-[var(--red-dim)] border-[var(--red)] text-[var(--red)]"
+                      : "bg-[var(--bg-base)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-[var(--border-bright)]"
                   }`}
                 >
                   SHORT
@@ -338,43 +325,37 @@ export default function NovoTrade() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Entrada
-              </label>
+              <label className={labelClass}>Entrada</label>
               <input
                 type="number"
                 step="0.01"
                 value={tradeForm.entryPrice || ""}
                 onChange={(e) => setTradeForm({ ...tradeForm, entryPrice: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                className={inputClass}
                 placeholder="5450.00"
                 required
               />
             </div>
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Stop
-              </label>
+              <label className={labelClass}>Stop</label>
               <input
                 type="number"
                 step="0.01"
                 value={tradeForm.stopPrice || ""}
                 onChange={(e) => setTradeForm({ ...tradeForm, stopPrice: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                className={inputClass}
                 placeholder="5445.00"
                 required
               />
             </div>
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Alvo
-              </label>
+              <label className={labelClass}>Alvo</label>
               <input
                 type="number"
                 step="0.01"
                 value={tradeForm.targetPrice || ""}
                 onChange={(e) => setTradeForm({ ...tradeForm, targetPrice: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                className={inputClass}
                 placeholder="5460.00"
                 required
               />
@@ -382,26 +363,22 @@ export default function NovoTrade() {
           </div>
 
           <div>
-            <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-              Contratos
-            </label>
+            <label className={labelClass}>Contratos</label>
             <input
               type="number"
               min="1"
               value={tradeForm.contracts}
               onChange={(e) => setTradeForm({ ...tradeForm, contracts: parseInt(e.target.value) || 1 })}
-              className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors max-w-[120px]"
+              className={`${inputClass} max-w-[120px]`}
             />
           </div>
 
           <div>
-            <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-              Motivo da Entrada
-            </label>
+            <label className={labelClass}>Motivo da Entrada</label>
             <textarea
               value={tradeForm.entryReason}
               onChange={(e) => setTradeForm({ ...tradeForm, entryReason: e.target.value })}
-              className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors min-h-[60px] resize-none"
+              className={`${inputClass} min-h-[60px] resize-none`}
               placeholder="Descreva o setup e motivo da entrada..."
               required
             />
@@ -409,23 +386,21 @@ export default function NovoTrade() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                Resultado
-              </label>
+              <label className={labelClass}>Resultado</label>
               <div className="flex gap-2">
                 {(["WIN", "LOSS", "BREAKEVEN"] as const).map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setTradeForm({ ...tradeForm, result: r })}
-                    className={`flex-1 py-2 rounded-md text-[11px] font-bold font-['Space_Mono'] border transition-colors ${
+                    className={`flex-1 py-2 text-[11px] font-semibold font-mono-title border transition-colors ${
                       tradeForm.result === r
                         ? r === "WIN"
-                          ? "bg-[#26A69A]/10 border-[#26A69A] text-[#26A69A]"
+                          ? "bg-[var(--green-dim)] border-[var(--green)] text-[var(--green)]"
                           : r === "LOSS"
-                          ? "bg-[#EF5350]/10 border-[#EF5350] text-[#EF5350]"
-                          : "bg-[#666666]/10 border-[#666666] text-[#666666]"
-                        : "bg-[#0D0D0D] border-[#1E1E1E] text-[#444444] hover:border-[#2A2A2A]"
+                          ? "bg-[var(--red-dim)] border-[var(--red)] text-[var(--red)]"
+                          : "bg-[rgba(100,100,100,0.1)] border-[var(--text-muted)] text-[var(--text-muted)]"
+                        : "bg-[var(--bg-base)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-[var(--border-bright)]"
                     }`}
                   >
                     {r === "BREAKEVEN" ? "BE" : r}
@@ -434,15 +409,13 @@ export default function NovoTrade() {
               </div>
             </div>
             <div>
-              <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-                P&L ($)
-              </label>
+              <label className={labelClass}>P&L ($)</label>
               <input
                 type="number"
                 step="0.01"
                 value={tradeForm.pnl || ""}
                 onChange={(e) => setTradeForm({ ...tradeForm, pnl: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors"
+                className={inputClass}
                 placeholder="50.00"
                 required
               />
@@ -450,62 +423,60 @@ export default function NovoTrade() {
           </div>
 
           <div>
-            <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-              Seguiu o Plano?
-            </label>
+            <label className={labelClass}>Seguiu o Plano?</label>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setTradeForm({ ...tradeForm, followedPlan: true })}
-                className={`px-4 py-2 rounded-md text-[12px] font-['JetBrains_Mono'] border transition-colors ${
+                className={`px-5 py-2 text-[12px] font-mono-title font-medium border transition-colors ${
                   tradeForm.followedPlan
-                    ? "bg-[#26A69A]/10 border-[#26A69A] text-[#26A69A]"
-                    : "bg-[#0D0D0D] border-[#1E1E1E] text-[#666666] hover:border-[#2A2A2A]"
+                    ? "bg-[var(--green-dim)] border-[var(--green)] text-[var(--green)]"
+                    : "bg-[var(--bg-base)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-[var(--border-bright)]"
                 }`}
               >
-                Sim
+                SIM
               </button>
               <button
                 type="button"
                 onClick={() => setTradeForm({ ...tradeForm, followedPlan: false })}
-                className={`px-4 py-2 rounded-md text-[12px] font-['JetBrains_Mono'] border transition-colors ${
+                className={`px-5 py-2 text-[12px] font-mono-title font-medium border transition-colors ${
                   !tradeForm.followedPlan
-                    ? "bg-[#EF5350]/10 border-[#EF5350] text-[#EF5350]"
-                    : "bg-[#0D0D0D] border-[#1E1E1E] text-[#666666] hover:border-[#2A2A2A]"
+                    ? "bg-[var(--red-dim)] border-[var(--red)] text-[var(--red)]"
+                    : "bg-[var(--bg-base)] border-[var(--border-color)] text-[var(--text-muted)] hover:border-[var(--border-bright)]"
                 }`}
               >
-                Não
+                NÃO
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-              Erros Cometidos <span className="text-[#444444]">(opcional)</span>
+            <label className={labelClass}>
+              Erros Cometidos <span className="text-[var(--text-muted)]">(opcional)</span>
             </label>
             <textarea
               value={tradeForm.errors}
               onChange={(e) => setTradeForm({ ...tradeForm, errors: e.target.value })}
-              className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors min-h-[60px] resize-none"
+              className={`${inputClass} min-h-[60px] resize-none`}
               placeholder="O que fiz de errado?"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono'] mb-1.5">
-              Observações <span className="text-[#444444]">(opcional)</span>
+            <label className={labelClass}>
+              Observações <span className="text-[var(--text-muted)]">(opcional)</span>
             </label>
             <textarea
               value={tradeForm.observations}
               onChange={(e) => setTradeForm({ ...tradeForm, observations: e.target.value })}
-              className="w-full bg-[#0D0D0D] border border-[#1E1E1E] rounded-md px-3 py-2.5 text-[13px] text-[#E8E8E8] font-['JetBrains_Mono'] focus:border-[#2A2A2A] focus:outline-none transition-colors min-h-[60px] resize-none"
+              className={`${inputClass} min-h-[60px] resize-none`}
               placeholder="Notas adicionais..."
             />
           </div>
 
           <button
             type="submit"
-            className="bg-[#E8E8E8] text-[#000000] font-['Space_Mono'] font-bold text-sm px-6 py-3 rounded-md hover:bg-[#FFFFFF] active:scale-[0.97] transition-all duration-150 w-full sm:w-auto"
+            className="td-btn w-full sm:w-auto bg-[var(--text-primary)] text-[var(--bg-base)] hover:bg-[var(--white)]"
           >
             SALVAR TRADE
           </button>

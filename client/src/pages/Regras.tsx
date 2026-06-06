@@ -33,53 +33,51 @@ export default function Regras() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div className="animate-fade-in">
-        <h1 className="text-lg font-bold font-['Space_Mono'] text-[#E8E8E8] mb-1">
-          Regras do Dia
+      <div className="animate-fade-in-up">
+        <h1 className="font-mono-title text-lg font-semibold text-[var(--text-primary)] mb-1">
+          REGRAS DO DIA
         </h1>
-        <p className="text-[12px] text-[#666666] font-['JetBrains_Mono']">
+        <p className="font-mono-title text-[11px] text-[var(--text-muted)]">
           Confira cada item antes de abrir posição. Não salva — é só para conferência mental.
         </p>
       </div>
 
       {/* Progress */}
-      <div className="animate-fade-in" style={{ animationDelay: "50ms" }}>
+      <div className="animate-fade-in-up stagger-2">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] text-[#666666] font-['JetBrains_Mono'] uppercase tracking-wider">
-            Checklist
-          </span>
-          <span className={`text-[12px] font-['Space_Mono'] font-bold ${allChecked ? "text-[#26A69A]" : "text-[#666666]"}`}>
+          <span className="td-label !mb-0">Checklist</span>
+          <span className={`font-mono-title text-[12px] font-semibold ${allChecked ? "text-[var(--green)]" : "text-[var(--text-muted)]"}`}>
             {checkedCount}/{RULES.length}
           </span>
         </div>
-        <div className="h-1 bg-[#1E1E1E] rounded-full overflow-hidden">
+        <div className="h-[3px] bg-[var(--border-color)] overflow-hidden">
           <div
-            className="h-full bg-[#26A69A] transition-all duration-300 ease-out rounded-full"
+            className="h-full bg-[var(--green)] transition-all duration-300"
             style={{ width: `${(checkedCount / RULES.length) * 100}%` }}
           />
         </div>
       </div>
 
       {/* Rules */}
-      <div className="space-y-1 animate-fade-in" style={{ animationDelay: "100ms" }}>
+      <div className="space-y-1">
         {RULES.map((rule, index) => (
           <button
             key={index}
             onClick={() => toggleRule(index)}
-            className={`w-full flex items-start gap-3 p-3 rounded-md text-left transition-all duration-150 border ${
+            className={`w-full flex items-start gap-3 p-3 text-left transition-all duration-150 border animate-fade-in-up stagger-${Math.min(index + 1, 8)} ${
               checked[index]
-                ? "bg-[#26A69A]/5 border-[#26A69A]/20"
-                : "bg-[#0D0D0D] border-[#1E1E1E] hover:border-[#2A2A2A]"
+                ? "bg-[var(--green-dim)] border-[var(--green)]"
+                : "bg-[var(--bg-surface)] border-[var(--border-color)] hover:border-[var(--border-bright)]"
             }`}
           >
             {checked[index] ? (
-              <CheckSquare size={16} className="text-[#26A69A] mt-0.5 shrink-0" />
+              <CheckSquare size={15} className="text-[var(--green)] mt-0.5 shrink-0" />
             ) : (
-              <Square size={16} className="text-[#444444] mt-0.5 shrink-0" />
+              <Square size={15} className="text-[var(--text-muted)] mt-0.5 shrink-0" />
             )}
             <span
-              className={`text-[13px] font-['JetBrains_Mono'] transition-colors ${
-                checked[index] ? "text-[#26A69A]" : "text-[#C8C8C8]"
+              className={`font-mono-title text-[12px] transition-colors ${
+                checked[index] ? "text-[var(--green)]" : "text-[var(--td-accent)]"
               }`}
             >
               {rule}
@@ -89,32 +87,23 @@ export default function Regras() {
       </div>
 
       {/* Objective */}
-      <div
-        className="bg-[#0D0D0D] border border-[#1E1E1E] rounded-md p-5 animate-fade-in"
-        style={{ animationDelay: "150ms" }}
-      >
+      <div className="td-card">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-              Objetivo
-            </span>
-            <span className="text-[13px] text-[#E8E8E8] font-['Space_Mono'] font-bold">
+            <span className="td-label !mb-0">Objetivo</span>
+            <span className="font-mono-title text-[13px] text-[var(--text-primary)] font-semibold">
               Passar a avaliação Lucid 25K
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-              Prop Firm
-            </span>
-            <span className="text-[13px] text-[#E8E8E8] font-['JetBrains_Mono']">
+            <span className="td-label !mb-0">Prop Firm</span>
+            <span className="font-mono-title text-[12px] text-[var(--text-primary)]">
               Lucid Trading
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-[#666666] uppercase tracking-wider font-['JetBrains_Mono']">
-              Produto
-            </span>
-            <span className="text-[13px] text-[#E8E8E8] font-['JetBrains_Mono']">
+            <span className="td-label !mb-0">Produto</span>
+            <span className="font-mono-title text-[12px] text-[var(--text-primary)]">
               MES / MNQ (futuros)
             </span>
           </div>
@@ -123,8 +112,8 @@ export default function Regras() {
 
       {/* All checked message */}
       {allChecked && (
-        <div className="bg-[#26A69A]/5 border border-[#26A69A]/20 rounded-md p-4 text-center animate-fade-in">
-          <p className="text-[#26A69A] text-[13px] font-['Space_Mono'] font-bold">
+        <div className="td-card border-[var(--green)]! bg-[var(--green-dim)] text-center animate-fade-in-up">
+          <p className="font-mono-title text-[13px] text-[var(--green)] font-semibold">
             CHECKLIST COMPLETA — PRONTO PARA OPERAR
           </p>
         </div>

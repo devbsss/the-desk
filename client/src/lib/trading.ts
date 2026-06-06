@@ -104,31 +104,84 @@ export function calculateWinLossByAsset(
   });
 }
 
+export function calculatePerformanceByHour(
+  trades: Trade[]
+): { hour: string; wins: number; losses: number; pnl: number }[] {
+  const hours: Record<string, { wins: number; losses: number; pnl: number }> = {};
+
+  trades.forEach((t) => {
+    const hour = t.entryTime.split(":")[0] + ":00";
+    if (!hours[hour]) hours[hour] = { wins: 0, losses: 0, pnl: 0 };
+    hours[hour].pnl += t.pnl;
+    if (t.result === "WIN") hours[hour].wins++;
+    if (t.result === "LOSS") hours[hour].losses++;
+  });
+
+  return Object.entries(hours)
+    .map(([hour, data]) => ({ hour, ...data }))
+    .sort((a, b) => a.hour.localeCompare(b.hour));
+}
+
+export function calculatePnLByWeekday(
+  trades: Trade[]
+): { day: string; pnl: number; trades: number }[] {
+  const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const weekdayData: Record<number, { pnl: number; trades: number }> = {};
+
+  trades.forEach((t) => {
+    const date = new Date(t.date + "T12:00:00");
+    const dow = date.getDay();
+    if (!weekdayData[dow]) weekdayData[dow] = { pnl: 0, trades: 0 };
+    weekdayData[dow].pnl += t.pnl;
+    weekdayData[dow].trades++;
+  });
+
+  return [1, 2, 3, 4, 5].map((dow) => ({
+    day: days[dow],
+    pnl: weekdayData[dow]?.pnl || 0,
+    trades: weekdayData[dow]?.trades || 0,
+  }));
+}
+
 export function getTodayPnL(trades: Trade[]): number {
   const today = new Date().toISOString().split("T")[0];
   const todayTrades = trades.filter((t) => t.date === today);
   return calculateTotalPnL(todayTrades);
 }
 
+// Frases motivacionais em português
 export const MOTIVATIONAL_QUOTES = [
-  "Discipline is the bridge between goals and accomplishment.",
-  "The market rewards patience and punishes emotion.",
-  "You don't need to trade every day. You need to trade the right setups.",
-  "A loss following the plan is better than a win breaking the rules.",
-  "The funded account is built one disciplined trade at a time.",
-  "Not trading IS a trading decision. Make it deliberately.",
-  "Protect the downside. The upside takes care of itself.",
-  "Your edge is only visible over 100+ trades. Trust the process.",
-  "Amateurs trade to be right. Pros trade to make money.",
-  "2 trades. 2 hours. That's the job today.",
-  "If there's no setup, there's no trade. Simple.",
-  "The goal today: follow the plan. Not make money — follow the plan.",
-  "Consistency beats intensity every time.",
+  "Disciplina não é motivação. É o que você faz quando a motivação vai embora.",
+  "O mercado paga quem espera o setup certo, não quem opera mais.",
+  "Um loss seguindo o plano vale mais que um win quebrando as regras.",
+  "Sua edge só aparece em 100+ trades. Confie no processo.",
+  "Amadores operam para ter razão. Profissionais operam para ganhar dinheiro.",
+  "Não operar também é uma decisão de trading. Tome ela conscientemente.",
+  "2 trades. 2 horas. Esse é o trabalho de hoje.",
+  "Se não tem setup, não tem trade. Simples assim.",
+  "Proteja o capital. O lucro cuida de si mesmo.",
+  "Consistência bate intensidade toda vez.",
+  "O funded account é construído um trade disciplinado por vez.",
+  "Hoje o objetivo é seguir o plano — não ganhar dinheiro. Seguir o plano.",
+  "Cada trade registrado é dado. Cada dado é aprendizado.",
+];
+
+export const FOCUS_QUOTES = [
+  "Tem setup claro? Então entra. Senão, fecha o app.",
+  "Registre com honestidade. Esse dado é só seu.",
+  "Foco no processo. O resultado é consequência.",
+  "Antes de entrar: setup, stop, alvo. Sem exceção.",
+  "Esse trade segue o plano? Se não, não é trade.",
 ];
 
 export function getRandomQuote(): string {
   const index = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
   return MOTIVATIONAL_QUOTES[index];
+}
+
+export function getRandomFocusQuote(): string {
+  const index = Math.floor(Math.random() * FOCUS_QUOTES.length);
+  return FOCUS_QUOTES[index];
 }
 
 export function formatCurrency(value: number): string {
