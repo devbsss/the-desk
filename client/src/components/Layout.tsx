@@ -52,10 +52,10 @@ export default function Layout({ children }: { children: ReactNode }) {
           </nav>
           <div className="p-4 border-t border-[var(--border-color)]">
             <div className="text-[10px] text-[var(--text-muted)] font-mono-title uppercase tracking-wider">
-              Lucid Trading 25K
-            </div>
-            <div className="text-[10px] text-[var(--text-muted)] font-mono-title mt-1">
               MES / MNQ Futures
+            </div>
+            <div className="text-[10px] text-[var(--text-muted)] font-mono-title mt-1 opacity-40">
+              THE DESK v3
             </div>
           </div>
         </aside>
