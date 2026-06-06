@@ -8,3 +8,9 @@
 - [x] Academia: Rewrite quiz engine with Duolingo-style flow (lesson intro → quiz → feedback → complete screen)
 - [x] Academia: 4 modules, 22 lessons, 94 questions (multiple choice, true/false, calculation, scenario)
 - [x] Academia: Progress persisted in localStorage, XP system, module completion badges
+- [x] Academia REDESIGN: Separar Estudo (escola completa) do Quiz (teste opcional)
+- [x] Academia: Conteúdo rico com texto, SVGs, exemplos reais e fontes citadas
+- [x] Academia: Questões de fixação intercaladas no estudo (não bloquear progresso)
+- [x] Academia: Quiz completo separado, acessível só após estudar
+- [x] Academia: 4 módulos com conteúdo profundo baseado em fontes confiáveis (CME, Investopedia, etc.)
+- [x] Academia: 14 lições, 15 questões de fixação inline, 30 questões de quiz, 14 SVGs, 16 citações de fontes
