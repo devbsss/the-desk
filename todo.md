@@ -17,3 +17,12 @@
 - [x] Janelas: Corrigir detecção automática da janela atual (baseada no horário ET real, não hardcoded)
 - [x] P&L Tracker: Criar página mensal com calendário (dias do mês, P&L por dia, resumo mensal)
 - [x] Bugs gerais: Revisar e corrigir quaisquer bugs encontrados (0 erros TypeScript, build limpo)
+- [x] Academia EXPANSÃO: Módulo 1 expandido para 7 lições (Candles, S&R, Futuros, Risco, Prop Firms, Heikin Ashi, Volume/VWAP)
+- [x] Academia EXPANSÃO: Módulo 2 expandido para 6 lições (Tendência, Padrões, Volume, Estrutura, Oferta/Demanda, Confluência)
+- [ ] Academia EXPANSÃO: Módulo 3 expandido para 6+ lições (SMC, Order Blocks, FVG, Liquidity, BOS/CHoCH, Inducement) [créditos insuficientes]
+- [ ] Academia EXPANSÃO: Módulo 4 expandido para 6+ lições (Psicologia, Gestão de Risco, Plano de Trade, Journaling, Consistência, Avaliação Prop) [créditos insuficientes]
+- [x] Academia EXPANSÃO: 43 questões de quiz (aumento de 30 para 43) + 20+ questões inline de fixação
+- [x] Academia EXPANSÃO: Fontes reais citadas em cada lição (CME, Investopedia, CFTC, Steve Nison, Mark Douglas, Al Brooks, Lance Beggs)
+- [x] Iniciar Sessão: HORÁRIO INÍCIO auto-preencher com horário atual ao abrir o formulário
+- [x] Academia: Adicionada lição completa sobre Heikin Ashi (anatomia, fórmulas, tabelas, exemplos, fontes)
+- [x] Academia: Expandida para 19 lições e 43+ questões de quiz com fontes reais (parcial — créditos limitados)

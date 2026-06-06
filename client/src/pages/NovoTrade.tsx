@@ -17,15 +17,20 @@ export default function NovoTrade() {
   const todayPnL = getTodayPnL(trades);
 
   // Session form state
-  const [sessionForm, setSessionForm] = useState({
-    date: new Date().toISOString().split("T")[0],
-    startTime: "",
-    asset: "MES" as "MES" | "MNQ",
-    sleep: "6–8h" as "< 4h" | "4–6h" | "6–8h" | "8h+",
-    mood: "Focado" as "Calmo" | "Ansioso" | "Cansado" | "Focado",
-    initialBalance: 0,
-    maxDailyLoss: 100,
-    dayPlan: "",
+  const [sessionForm, setSessionForm] = useState(() => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    return {
+      date: now.toISOString().split("T")[0],
+      startTime: `${hh}:${mm}`,
+      asset: "MES" as "MES" | "MNQ",
+      sleep: "6–8h" as "< 4h" | "4–6h" | "6–8h" | "8h+",
+      mood: "Focado" as "Calmo" | "Ansioso" | "Cansado" | "Focado",
+      initialBalance: 0,
+      maxDailyLoss: 100,
+      dayPlan: "",
+    };
   });
 
   // Trade form state

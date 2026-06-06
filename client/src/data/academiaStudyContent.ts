@@ -680,6 +680,193 @@ const mod1Lessons: StudyLesson[] = [
       },
     ],
   },
+  // ── LIÇÃO 1.5 — Heikin Ashi ─────────────────────────────────
+  {
+    id: '1.6',
+    title: 'Heikin Ashi — O Candle que Filtra o Ruído',
+    duration: '14 min',
+    blocks: [
+      {
+        type: 'text',
+        content:
+          'Heikin Ashi (平均足) significa "barra média" em japonês. É uma variação dos gráficos de candlestick que usa valores médios para suavizar o ruído do mercado e tornar as tendências mais visíveis. Diferente dos candles normais que mostram o preço exato de abertura, fechamento, máxima e mínima, o Heikin Ashi calcula esses valores usando médias dos períodos anteriores. O resultado é um gráfico mais "limpo" que facilita a identificação de tendências — mas que NÃO mostra os preços reais de execução.',
+      },
+      {
+        type: 'callout',
+        content:
+          '⚠️ IMPORTANTE: Os preços do Heikin Ashi NÃO são preços reais de mercado. Use HA para identificar tendência e candles normais para definir entradas e stops precisos. Fonte: Investopedia — investopedia.com/trading/heikin-ashi-better-candlestick/',
+      },
+      {
+        type: 'heading',
+        content: 'Como o Heikin Ashi é Calculado',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Valor HA', 'Fórmula', 'O que representa'],
+          rows: [
+            ['HA Close', '(Open + High + Low + Close) ÷ 4', 'Preço médio do período'],
+            ['HA Open', '(HA Open anterior + HA Close anterior) ÷ 2', 'Média das aberturas HA'],
+            ['HA High', 'Máximo entre: High real, HA Open, HA Close', 'Máxima real do período'],
+            ['HA Low', 'Mínimo entre: Low real, HA Open, HA Close', 'Mínima real do período'],
+          ],
+        },
+      },
+      {
+        type: 'text',
+        content:
+          'Por causa dessas médias, o Heikin Ashi tem propriedades únicas: em tendências fortes de alta, os candles HA tendem a ser verdes consecutivos SEM sombra inferior (compradores dominam completamente). Em tendências fortes de baixa, candles vermelhos consecutivos sem sombra superior. Quando a tendência está enfraquecendo, aparecem sombras nos dois lados e corpos menores. Isso torna muito fácil identificar quando uma tendência está forte, fraca ou revertendo.',
+      },
+      {
+        type: 'heading',
+        content: 'Lendo os Sinais do Heikin Ashi',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Padrão HA', 'Significado', 'Ação sugerida'],
+          rows: [
+            ['Candles verdes sem sombra inferior', 'Tendência de alta forte — compradores no controle', 'Manter long, não vender'],
+            ['Candles vermelhos sem sombra superior', 'Tendência de baixa forte — vendedores no controle', 'Manter short, não comprar'],
+            ['Candle pequeno com sombras dos dois lados', 'Tendência enfraquecendo, possível reversão', 'Reduzir posição, aguardar confirmação'],
+            ['Doji HA (corpo mínimo)', 'Reversão iminente — mercado em equilíbrio', 'Sair da posição atual, aguardar novo sinal'],
+            ['Primeiro candle verde após série vermelha', 'Possível início de reversão bullish', 'Aguardar confirmação (2º candle verde)'],
+            ['Primeiro candle vermelho após série verde', 'Possível início de reversão bearish', 'Aguardar confirmação (2º candle vermelho)'],
+          ],
+        },
+      },
+      {
+        type: 'heading',
+        content: 'Heikin Ashi vs Candles Normais — Quando Usar Cada Um',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Situação', 'Candles Normais', 'Heikin Ashi'],
+          rows: [
+            ['Identificar tendência geral', '✓ (funciona)', '✓✓ (mais claro)'],
+            ['Definir entrada precisa', '✓✓ (preços reais)', '✗ (preços médios)'],
+            ['Definir stop-loss exato', '✓✓ (preços reais)', '✗ (não use HA para stops)'],
+            ['Filtrar ruído em scalping', '✗ (muito ruído)', '✓✓ (suaviza o ruído)'],
+            ['Identificar reversão de tendência', '✓ (padrões de candle)', '✓✓ (sombras HA são claras)'],
+            ['Calcular P&L', '✓✓ (preços reais)', '✗ (valores calculados)'],
+          ],
+        },
+      },
+      {
+        type: 'warning',
+        content:
+          'Heikin Ashi em mercados laterais (ranging) gera muitos sinais falsos. Em um mercado sem tendência clara, os candles HA ficam alternando cores rapidamente, criando a ilusão de tendências que não existem. Sempre confirme com a estrutura de mercado antes de operar baseado apenas no HA.',
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'Você está operando MES com Heikin Ashi. Após 6 candles verdes sem sombra inferior, aparece um candle com sombra inferior de 8 pontos e sombra superior de 3 pontos. O que isso indica?',
+          options: [
+            { id: 'a', text: 'A tendência de alta está se fortalecendo — adicionar contratos' },
+            { id: 'b', text: 'A tendência de alta está enfraquecendo — considerar reduzir posição ou apertar stop' },
+            { id: 'c', text: 'O mercado vai reverter imediatamente — sair agora' },
+            { id: 'd', text: 'Sinal irrelevante, continuar operando normalmente' },
+          ],
+          correctId: 'b',
+          explanation: 'Candles HA verdes sem sombra inferior = tendência forte. Quando aparece sombra inferior, significa que vendedores começaram a aparecer durante o período. Não é sinal de reversão imediata, mas é alerta de enfraquecimento. Apertar o stop ou reduzir posição é prudente.',
+        },
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'Por que você NÃO deve usar o preço de fechamento do Heikin Ashi para definir seu stop-loss?',
+          options: [
+            { id: 'a', text: 'Porque o HA é muito lento para scalping' },
+            { id: 'b', text: 'Porque o preço de fechamento HA é uma média calculada, não o preço real de mercado onde sua ordem seria executada' },
+            { id: 'c', text: 'Porque stops devem ser sempre baseados em suporte e resistência' },
+            { id: 'd', text: 'Porque o HA não funciona em futuros' },
+          ],
+          correctId: 'b',
+          explanation: 'O HA Close = (Open + High + Low + Close) ÷ 4. Esse valor é calculado matematicamente e não existe como preço real no mercado. Use sempre preços reais (candles normais) para definir stops e entradas precisas.',
+        },
+      },
+      {
+        type: 'source',
+        label: 'Investopedia — Heikin Ashi: How to Use It in Trading',
+        url: 'https://www.investopedia.com/trading/heikin-ashi-better-candlestick/',
+      },
+      {
+        type: 'source',
+        label: 'TradingView — Heikin Ashi Indicator Documentation',
+        url: 'https://www.tradingview.com/support/solutions/43000502349-heikin-ashi/',
+      },
+    ],
+  },
+  // ── LIÇÃO 1.6 — Volume e VWAP ─────────────────────────────────
+  {
+    id: '1.7',
+    title: 'Volume e VWAP — O que o Dinheiro Grande Está Fazendo',
+    duration: '16 min',
+    blocks: [
+      {
+        type: 'text',
+        content:
+          'Volume é o número de contratos negociados em um período. É o único indicador que não é derivado do preço — é uma medida independente de participação do mercado. Quando o preço sobe com volume alto, a tendência é genuína. Quando sobe com volume baixo, pode ser uma armadilha. Jesse Livermore dizia: "Volume é o combustível do mercado. Sem volume, os movimentos de preço são suspeitos."',
+      },
+      {
+        type: 'heading',
+        content: 'Lendo o Volume',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Situação', 'Interpretação', 'O que fazer'],
+          rows: [
+            ['Preço sobe + volume alto', 'Tendência de alta genuína, institucional comprando', 'Seguir a tendência'],
+            ['Preço sobe + volume baixo', 'Movimento fraco, possível armadilha (bull trap)', 'Cuidado, aguardar confirmação'],
+            ['Preço cai + volume alto', 'Tendência de baixa genuína, institucional vendendo', 'Seguir a tendência'],
+            ['Preço cai + volume baixo', 'Correção técnica, provavelmente temporária', 'Possível oportunidade de compra'],
+            ['Volume muito alto em suporte', 'Absorção — compradores absorvendo vendedores', 'Possível reversão bullish'],
+            ['Volume muito alto em resistência', 'Distribuição — vendedores absorvendo compradores', 'Possível reversão bearish'],
+          ],
+        },
+      },
+      {
+        type: 'heading',
+        content: 'VWAP — O Preço Justo do Dia',
+      },
+      {
+        type: 'text',
+        content:
+          'O VWAP (Volume Weighted Average Price) é o preço médio de todas as transações do dia, ponderado pelo volume de cada transação. É o indicador mais usado por traders institucionais e algoritmos. Representa o "preço justo" do dia — o nível onde a maioria do dinheiro foi negociado. Para day traders, o VWAP funciona como suporte/resistência dinâmico. Em tendências de alta, o preço tende a ficar acima do VWAP e retornar a ele em correções (oportunidade de compra). Em tendências de baixa, fica abaixo e retorna ao VWAP em bounces (oportunidade de venda).',
+      },
+      {
+        type: 'example',
+        content:
+          'Exemplo prático: O MES abre em 5.280. O VWAP sobe para 5.295 às 10h30 conforme o mercado sobe. O preço está em 5.310 — acima do VWAP. Uma correção puxa o preço de volta para 5.295 (VWAP). Traders que usam VWAP como suporte compram em 5.295 com stop em 5.285 (10 pontos abaixo do VWAP) e target em 5.320 (25 pontos acima). R:R = 1:2.5.',
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'O MES está em tendência de alta. O preço corrige de 5.320 para 5.298, exatamente no VWAP do dia. O que isso representa?',
+          options: [
+            { id: 'a', text: 'Sinal de reversão bearish — vender' },
+            { id: 'b', text: 'Zona de suporte dinâmico (VWAP) — possível oportunidade de compra com stop abaixo do VWAP' },
+            { id: 'c', text: 'O VWAP não tem relevância em tendências de alta' },
+            { id: 'd', text: 'Aguardar o preço cair mais 20 pontos antes de comprar' },
+          ],
+          correctId: 'b',
+          explanation: 'Em tendência de alta, o VWAP funciona como suporte dinâmico. O preço corrigindo até o VWAP é uma oportunidade de compra — o mercado está "testando o preço justo do dia" antes de continuar subindo. Stop abaixo do VWAP (5-10 pontos) e target no topo anterior.',
+        },
+      },
+      {
+        type: 'source',
+        label: 'Investopedia — VWAP: Volume Weighted Average Price',
+        url: 'https://www.investopedia.com/terms/v/vwap.asp',
+      },
+      {
+        type: 'source',
+        label: 'CME Group — Volume and Open Interest',
+        url: 'https://www.cmegroup.com/education/courses/technical-analysis/volume-and-open-interest.html',
+      },
+    ],
+  },
 ];
 
 // ============================================================
@@ -871,6 +1058,187 @@ const mod2Lessons: StudyLesson[] = [
           explanation:
             'Volume 3x acima da média em um rompimento de resistência é um sinal altamente positivo. Indica participação institucional — grandes players comprando, não apenas traders de varejo. Isso aumenta significativamente a probabilidade de o rompimento ser genuíno.',
         },
+      },
+    ],
+  },
+  // ── LIÇÃO 2.4 — Estrutura de Tendência ────────────────────────────────
+  {
+    id: '2.4',
+    title: 'Estrutura de Tendência — Topos, Fundos e Reversões',
+    duration: '16 min',
+    blocks: [
+      {
+        type: 'text',
+        content:
+          'A estrutura de mercado é a linguagem fundamental do Price Action. Charles Dow definiu em 1900: tendência de alta = série de Higher Highs (HH) e Higher Lows (HL). Tendência de baixa = Lower Highs (LH) e Lower Lows (LL). Simples assim — mas poucos traders aplicam isso de forma consistente. Antes de qualquer indicador, você precisa saber onde o mercado está estruturalmente.',
+      },
+      {
+        type: 'callout',
+        content:
+          'Fonte: Teoria de Dow (1900). Al Brooks — "Reading Price Charts Bar by Bar" (2009). Investopedia: investopedia.com/terms/d/dowtheory.asp',
+      },
+      {
+        type: 'svg',
+        svgId: 'trend-structure',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Estrutura', 'Topos', 'Fundos', 'Viés'],
+          rows: [
+            ['Tendência de Alta', 'HH (Higher High)', 'HL (Higher Low)', 'Comprar em correções (HL)'],
+            ['Tendência de Baixa', 'LH (Lower High)', 'LL (Lower Low)', 'Vender em bounces (LH)'],
+            ['Lateral (Range)', 'Topos iguais', 'Fundos iguais', 'Comprar no suporte, vender na resistência'],
+            ['Reversão de Alta', 'LH → HH', 'LL → HL', 'Aguardar confirmação do HL'],
+            ['Reversão de Baixa', 'HH → LH', 'HL → LL', 'Aguardar confirmação do LH'],
+          ],
+        },
+      },
+      {
+        type: 'text',
+        content:
+          'Em uma tendência de alta saudável, cada swing high é mais alto que o anterior e cada swing low é mais alto que o anterior. O momento em que o preço quebra abaixo do último Higher Low é o primeiro sinal de que a tendência pode estar enfraquecendo. Não é garantia de reversão — pode ser apenas uma consolidação — mas é um alerta para reduzir posições longas.',
+      },
+      {
+        type: 'example',
+        content:
+          'Exemplo real: MES em março de 2024. Tendência de alta com HH em 5.180 e HL em 5.120. Preço subiu para novo HH em 5.210, corrigiu para HL em 5.155 (acima do anterior de 5.120 — estrutura intácta), depois subiu para 5.250. Traders que identificaram a estrutura compraram no HL de 5.155 com stop em 5.135 e target em 5.240. Risco: 20 pts × $5 = $100. Ganho: 85 pts × $5 = $425. R:R = 1:4.25.',
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'O MES fez: 5.100 → 5.180 → 5.130 → 5.200 → 5.155 → 5.240. Qual é a estrutura atual?',
+          options: [
+            { id: 'a', text: 'Tendência de baixa (Lower Highs e Lower Lows)' },
+            { id: 'b', text: 'Mercado lateral (topos e fundos iguais)' },
+            { id: 'c', text: 'Tendência de alta (Higher Highs e Higher Lows)' },
+            { id: 'd', text: 'Reversão de tendência em andamento' },
+          ],
+          correctId: 'c',
+          explanation: 'Topos: 5.180 → 5.200 → 5.240 (cada um mais alto = HH). Fundos: 5.130 → 5.155 (cada um mais alto = HL). Estrutura de tendência de alta intácta. Viés: comprar em correções para os Higher Lows.',
+        },
+      },
+      {
+        type: 'source',
+        label: 'Investopedia — Dow Theory',
+        url: 'https://www.investopedia.com/terms/d/dowtheory.asp',
+      },
+      {
+        type: 'source',
+        label: 'Al Brooks — Brooks Trading Course',
+        url: 'https://www.brookstradingcourse.com/',
+      },
+    ],
+  },
+  // ── LIÇÃO 2.5 — Zonas de Oferta e Demanda ───────────────────────────
+  {
+    id: '2.5',
+    title: 'Zonas de Oferta e Demanda — Onde os Institucionais Operam',
+    duration: '18 min',
+    blocks: [
+      {
+        type: 'text',
+        content:
+          'Zonas de oferta e demanda (Supply & Demand) são uma evolução do conceito de suporte e resistência. Enquanto S&R foca em níveis onde o mercado reagiu, as zonas de S&D focam em ONDE os grandes players deixaram ordens pendentes. A teoria foi popularizada por Sam Seiden e é baseada na premissa de que grandes ordens institucionais não podem ser executadas de uma vez — elas deixam "rastros" no gráfico na forma de movimentos explosivos.',
+      },
+      {
+        type: 'callout',
+        content:
+          'Fonte: Sam Seiden — Online Trading Academy. Investopedia: investopedia.com/articles/active-trading/031215/supply-and-demand-trading.asp',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Tipo de Zona', 'Formação', 'Expectativa', 'Qualidade'],
+          rows: [
+            ['Demanda (Rally-Base-Rally)', 'Subida → consolidação → subida forte', 'Preço retorna e sobe novamente', 'Alta'],
+            ['Demanda (Drop-Base-Rally)', 'Queda → consolidação → subida forte', 'Preço retorna e sobe (reversão)', 'Muito Alta'],
+            ['Oferta (Rally-Base-Drop)', 'Subida → consolidação → queda forte', 'Preço retorna e cai (reversão)', 'Muito Alta'],
+            ['Oferta (Drop-Base-Drop)', 'Queda → consolidação → queda forte', 'Preço retorna e cai novamente', 'Alta'],
+          ],
+        },
+      },
+      {
+        type: 'text',
+        content:
+          'O "frescor" de uma zona é inversamente proporcional ao número de vezes que foi testada. Uma zona nunca testada tem todas as ordens institucionais intáctas — alta probabilidade de reação. Após 2 testes, a zona perde força significativamente. Após 3 testes, considere que a zona foi "consumida" e pode ser rompida.',
+      },
+      {
+        type: 'example',
+        content:
+          'Exemplo com MNQ: Em fevereiro de 2024, o MNQ consolidou entre 17.750-17.790, seguida de rali explosivo de 200 pontos em 3 candles (Drop-Base-Rally). Quando o MNQ corrigiu de volta para 17.780 em março, traders compraram com stop em 17.730 e target em 18.000. Risco: 50 pts × $2 = $100. Ganho: 220 pts × $2 = $440. R:R = 1:4.4.',
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'Uma zona de demanda foi testada 3 vezes e subiu em cada uma. Qual é a qualidade atual dessa zona?',
+          options: [
+            { id: 'a', text: 'Excelente — foi testada 3 vezes e funcionou, é muito confiável' },
+            { id: 'b', text: 'Baixa — após 3 testes, a maioria das ordens institucionais foi consumida' },
+            { id: 'c', text: 'Média — depende do volume em cada teste' },
+            { id: 'd', text: 'Alta — zonas de demanda ficam mais fortes com cada teste' },
+          ],
+          correctId: 'b',
+          explanation: 'Cada teste consome ordens institucionais pendentes. Após 3 testes, a maioria foi executada. A zona perde força e tem alta probabilidade de ser rompida no próximo teste. Prefira zonas "frescas" (0-1 testes).',
+        },
+      },
+      {
+        type: 'source',
+        label: 'Investopedia — Supply and Demand in Trading',
+        url: 'https://www.investopedia.com/articles/active-trading/031215/supply-and-demand-trading.asp',
+      },
+    ],
+  },
+  // ── LIÇÃO 2.6 — Confluência ───────────────────────────────────────────
+  {
+    id: '2.6',
+    title: 'Confluência — Empilhando Probabilidades a Seu Favor',
+    duration: '14 min',
+    blocks: [
+      {
+        type: 'text',
+        content:
+          'Confluência é o princípio de que um setup é mais confiável quando múltiplos fatores independentes apontam para a mesma direção. Um suporte sozinho é um sinal. Um suporte + EMA 20 + Fibonacci 61.8% + padrão de candle bullish = confluência de 4 fatores = setup de alta probabilidade. Lance Beggs descreve confluência como "empilhar as probabilidades a seu favor".',
+      },
+      {
+        type: 'table',
+        table: {
+          headers: ['Fator de Confluência', 'Peso', 'Exemplo'],
+          rows: [
+            ['Suporte/Resistência horizontal', 'Alto', 'Nível testado 3+ vezes'],
+            ['EMA 20 ou 50 como S&R dinâmico', 'Médio', 'Preço corrige para EMA 20 em tendência'],
+            ['Fibonacci 61.8%', 'Médio-Alto', 'Retração de 61.8% de um swing'],
+            ['VWAP', 'Alto (intraday)', 'Preço retorna ao VWAP após desvio'],
+            ['Padrão de candle de reversão', 'Médio', 'Martelo, Engolfo, Pinbar'],
+            ['Zona de S&D institucional', 'Alto', 'Drop-Base-Rally nunca testada'],
+            ['Nível psicológico redondo', 'Médio', '5.000, 5.100, 5.200'],
+            ['Alinhamento com tendência maior', 'Alto', 'Comprar em pullback em tendência de alta'],
+          ],
+        },
+      },
+      {
+        type: 'text',
+        content:
+          'Regra prática: exija pelo menos 3 fatores de confluência antes de entrar. Com 1 fator: probabilidade ~50%. Com 2: ~60%. Com 3+: ~70%+. Não é garantia, mas estatisticamente você está operando com a probabilidade a seu favor. Traders profissionais são seletivos — esperam pelos setups de alta confluência.',
+      },
+      {
+        type: 'quiz',
+        quiz: {
+          question: 'Você identifica: suporte horizontal em 5.200 testado 3 vezes, EMA 20 em 5.198, Fibonacci 61.8% em 5.202, Martelo formado em 5.199. Quantos fatores de confluência você tem?',
+          options: [
+            { id: 'a', text: '1 fator — apenas o suporte horizontal conta' },
+            { id: 'b', text: '2 fatores — suporte e padrão de candle' },
+            { id: 'c', text: '4 fatores — todos são independentes e apontam para compra' },
+            { id: 'd', text: '3 fatores — EMA e Fibonacci são o mesmo indicador' },
+          ],
+          correctId: 'c',
+          explanation: '4 fatores independentes: (1) suporte horizontal, (2) EMA 20 como suporte dinâmico, (3) Fibonacci 61.8%, (4) Martelo como confirmação bullish. Todos apontam para compra na zona 5.198-5.202. Setup de alta confluência.',
+        },
+      },
+      {
+        type: 'source',
+        label: 'Lance Beggs — Your Trading Coach',
+        url: 'https://yourtradingcoach.com/',
       },
     ],
   },
@@ -1316,6 +1684,50 @@ const mod1Quiz: QuizBlock[] = [
     correctId: 'c',
     explanation: 'R:R = Target ÷ Stop = 24 ÷ 8 = 3. Portanto R:R = 1:3. Com esse R:R, você pode perder 75% das operações e ainda empatar.',
   },
+  {
+    question: 'O que o Heikin Ashi mostra que candles normais não mostram tão claramente?',
+    options: [
+      { id: 'a', text: 'Os preços exatos de abertura e fechamento' },
+      { id: 'b', text: 'A direção e força da tendência de forma suavizada' },
+      { id: 'c', text: 'O volume de cada período' },
+      { id: 'd', text: 'Os níveis de suporte e resistência' },
+    ],
+    correctId: 'b',
+    explanation: 'Heikin Ashi usa médias para suavizar o ruído. Candles HA verdes consecutivos sem sombra inferior = tendência de alta forte. Candles vermelhos sem sombra superior = tendência de baixa forte. Isso é muito mais claro que candles normais em tendências.',
+  },
+  {
+    question: 'Por que você NÃO deve usar o preço de fechamento do Heikin Ashi para definir stops?',
+    options: [
+      { id: 'a', text: 'Porque o HA é muito lento' },
+      { id: 'b', text: 'Porque o fechamento HA é uma média calculada, não o preço real onde sua ordem seria executada' },
+      { id: 'c', text: 'Porque stops devem ser baseados em volume' },
+      { id: 'd', text: 'Porque o HA não funciona em futuros' },
+    ],
+    correctId: 'b',
+    explanation: 'HA Close = (Open + High + Low + Close) ÷ 4. Esse valor não existe como preço real no mercado. Use sempre preços reais (candles normais) para definir stops e entradas precisas.',
+  },
+  {
+    question: 'O VWAP representa:',
+    options: [
+      { id: 'a', text: 'O preço de abertura do dia' },
+      { id: 'b', text: 'O preço médio de todas as transações do dia, ponderado pelo volume' },
+      { id: 'c', text: 'A média das máximas e mínimas do dia' },
+      { id: 'd', text: 'O preço onde ocorreu o maior volume' },
+    ],
+    correctId: 'b',
+    explanation: 'VWAP = Volume Weighted Average Price. É o preço médio ponderado pelo volume de cada transação. Representa o "preço justo" do dia e é usado por institucionals como referência. Em tendência de alta, funciona como suporte dinâmico.',
+  },
+  {
+    question: 'Em uma tendência de alta, o preço corrige até o VWAP. O que isso representa?',
+    options: [
+      { id: 'a', text: 'Sinal de reversão — vender' },
+      { id: 'b', text: 'Zona de suporte dinâmico — possível oportunidade de compra' },
+      { id: 'c', text: 'O VWAP não tem relevância em tendências de alta' },
+      { id: 'd', text: 'Aguardar o preço cair mais 20 pontos' },
+    ],
+    correctId: 'b',
+    explanation: 'Em tendência de alta, o VWAP funciona como suporte dinâmico. Correção até o VWAP = oportunidade de compra com stop abaixo do VWAP e target no topo anterior.',
+  },
 ];
 
 const mod2Quiz: QuizBlock[] = [
@@ -1351,6 +1763,50 @@ const mod2Quiz: QuizBlock[] = [
     ],
     correctId: 'b',
     explanation: 'Volume alto em rompimento = confirmação. Grandes players precisam de volume para executar ordens. Volume acima da média em um rompimento indica que institucionais estão participando.',
+  },
+  {
+    question: 'O que define uma tendência de alta segundo a Teoria de Dow?',
+    options: [
+      { id: 'a', text: 'O preço está acima da EMA 200' },
+      { id: 'b', text: 'Série de Higher Highs (topos mais altos) e Higher Lows (fundos mais altos)' },
+      { id: 'c', text: 'O preço subiu mais de 20% nos últimos 6 meses' },
+      { id: 'd', text: 'Volume crescente nos movimentos de alta' },
+    ],
+    correctId: 'b',
+    explanation: 'Teoria de Dow (1900): tendência de alta = HH + HL. Cada topo é mais alto que o anterior e cada fundo é mais alto que o anterior. Compradores dispostos a pagar mais, vendedores não conseguem empurrar abaixo dos fundos anteriores.',
+  },
+  {
+    question: 'Uma zona de demanda "Drop-Base-Rally" é formada quando:',
+    options: [
+      { id: 'a', text: 'O preço sobe, consolida e sobe novamente' },
+      { id: 'b', text: 'O preço cai, consolida e então sobe explosivamente' },
+      { id: 'c', text: 'O preço cai, consolida e continua caindo' },
+      { id: 'd', text: 'O preço sobe, consolida e cai' },
+    ],
+    correctId: 'b',
+    explanation: 'Drop-Base-Rally: queda → consolidação (base) → rali explosivo. É o padrão de demanda mais forte porque mostra que institucionais colocaram ordens de compra na zona de consolidação durante a queda.',
+  },
+  {
+    question: 'Qual é a principal vantagem da estratégia do "reteste" em rompimentos?',
+    options: [
+      { id: 'a', text: 'Entrar mais rápido que outros traders' },
+      { id: 'b', text: 'Confirmar que o rompimento foi real, com stop mais curto e melhor R:R' },
+      { id: 'c', text: 'Evitar pagar comissões' },
+      { id: 'd', text: 'Operar contra a tendência' },
+    ],
+    correctId: 'b',
+    explanation: 'Reteste: após um rompimento genuino, aguardar o preço retornar ao nível rompido (role reversal). Vantagens: (1) confirma o rompimento; (2) stop mais curto; (3) melhor R:R. Desvantagem: às vezes o preço não retesta.',
+  },
+  {
+    question: 'O que é confluência no trading?',
+    options: [
+      { id: 'a', text: 'Quando dois indicadores dão o mesmo sinal' },
+      { id: 'b', text: 'Múltiplos fatores independentes apontando para a mesma direção, aumentando a probabilidade do setup' },
+      { id: 'c', text: 'Quando o preço está no VWAP e na EMA ao mesmo tempo' },
+      { id: 'd', text: 'A convergência de duas tendências diferentes' },
+    ],
+    correctId: 'b',
+    explanation: 'Confluência = empilhar probabilidades. Quanto mais fatores independentes apontam para a mesma direção (suporte, EMA, Fibonacci, padrão de candle, VWAP, zona de S&D), maior a probabilidade. Exija pelo menos 3 fatores.',
   },
 ];
 
