@@ -11,6 +11,8 @@ import NovoTrade from "./pages/NovoTrade";
 import Historico from "./pages/Historico";
 import Regras from "./pages/Regras";
 import Janelas from "./pages/Janelas";
+import Analista from "./pages/Analista";
+import Academia from "./pages/Academia";
 import Layout from "./components/Layout";
 
 function SplashScreen({ onDone }: { onDone: () => void }) {
@@ -30,8 +32,8 @@ function SplashScreen({ onDone }: { onDone: () => void }) {
     </div>
   );
 }
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
@@ -39,6 +41,8 @@ function Router() {
       <Route path="/historico" component={Historico} />
       <Route path="/janelas" component={Janelas} />
       <Route path="/regras" component={Regras} />
+      <Route path="/analista" component={Analista} />
+      <Route path="/academia" component={Academia} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
