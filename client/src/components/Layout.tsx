@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, History, Clock, BookOpen, Brain, Zap } from "lucide-react";
+import { LayoutDashboard, History, Clock, BookOpen, Brain, Zap, BarChart2 } from "lucide-react";
 import type { ReactNode } from "react";
 import MarketBar from "./MarketBar";
 
@@ -10,6 +10,7 @@ const navItems = [
   { path: "/janelas", label: "JANELAS", icon: Clock },
   { path: "/analista", label: "IA", icon: Brain },
   { path: "/academia", label: "AULA", icon: BookOpen },
+  { path: "/pnl", label: "P&L", icon: BarChart2 },
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {

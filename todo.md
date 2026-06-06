@@ -14,3 +14,6 @@
 - [x] Academia: Quiz completo separado, acessível só após estudar
 - [x] Academia: 4 módulos com conteúdo profundo baseado em fontes confiáveis (CME, Investopedia, etc.)
 - [x] Academia: 14 lições, 15 questões de fixação inline, 30 questões de quiz, 14 SVGs, 16 citações de fontes
+- [x] Janelas: Corrigir detecção automática da janela atual (baseada no horário ET real, não hardcoded)
+- [x] P&L Tracker: Criar página mensal com calendário (dias do mês, P&L por dia, resumo mensal)
+- [x] Bugs gerais: Revisar e corrigir quaisquer bugs encontrados (0 erros TypeScript, build limpo)

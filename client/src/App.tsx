@@ -13,6 +13,7 @@ import Regras from "./pages/Regras";
 import Janelas from "./pages/Janelas";
 import Analista from "./pages/Analista";
 import Academia from "./pages/Academia";
+import PnlTracker from "./pages/PnlTracker";
 import Layout from "./components/Layout";
 
 function SplashScreen({ onDone }: { onDone: () => void }) {
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/regras" component={Regras} />
       <Route path="/analista" component={Analista} />
       <Route path="/academia" component={Academia} />
+      <Route path="/pnl" component={PnlTracker} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

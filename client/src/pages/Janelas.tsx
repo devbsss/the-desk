@@ -10,10 +10,10 @@ interface SessionInfo {
   crossesMidnight: boolean;
   quality: number;
   description: string;
-  highlight?: "best" | "yours" | "avoid";
-  badge?: string;
+  highlight?: "best" | "avoid";
 }
 
+// Sessions WITHOUT any hardcoded "yours" — computed dynamically
 const sessions: SessionInfo[] = [
   {
     name: "Sessão Asiática",
@@ -25,6 +25,7 @@ const sessions: SessionInfo[] = [
     crossesMidnight: true,
     quality: 1,
     description: "Mercado asiático ativo, mas futuros americanos têm volume muito baixo. Alta chance de fakeouts e spreads largos. Evitar MES/MNQ nesse horário.",
+    highlight: "avoid",
   },
   {
     name: "Sessão Londres",
@@ -48,7 +49,6 @@ const sessions: SessionInfo[] = [
     quality: 3,
     description: "Maior volume do dia. Abertura de NY às 9:30 AM traz momentum forte. Setups mais claros, moves mais limpos. Ideal para MES e MNQ.",
     highlight: "best",
-    badge: "MELHOR JANELA",
   },
   {
     name: "Nova York Tarde",
@@ -60,8 +60,6 @@ const sessions: SessionInfo[] = [
     crossesMidnight: false,
     quality: 3,
     description: "Bom volume após almoço. Menos caótico que a abertura. Moves mais técnicos e previsíveis. Recomendado para quem está aprendendo.",
-    highlight: "yours",
-    badge: "SUA JANELA ATUAL",
   },
   {
     name: "Fechamento NY",
@@ -85,7 +83,6 @@ const sessions: SessionInfo[] = [
     quality: 1,
     description: "Volume mínimo. Spreads largos. Sem liquidez institucional. Não operar MES/MNQ nesse período.",
     highlight: "avoid",
-    badge: "EVITAR",
   },
 ];
 
@@ -113,22 +110,61 @@ function getTimeUntilOpen(session: SessionInfo, etNow: Date): string {
   return `${mins}min`;
 }
 
-function getCurrentWindowMessage(etNow: Date): { message: string; type: "ideal" | "ny" | "outside" } {
-  const currentMinutes = etNow.getHours() * 60 + etNow.getMinutes();
-  // 1:30 PM - 3:30 PM = 810 - 930
-  if (currentMinutes >= 810 && currentMinutes <= 930) {
-    return { message: "✓ Você está na sua janela. O mercado está pronto. Você está pronto?", type: "ideal" };
+/** Returns the name of the session that is currently open, or null if none */
+function getCurrentSessionName(etNow: Date): string | null {
+  for (const s of sessions) {
+    if (isSessionOpen(s, etNow)) return s.name;
   }
-  // 9:30 AM - 11:00 AM = 570 - 660
-  if (currentMinutes >= 570 && currentMinutes <= 660) {
-    return { message: "Janela de alta qualidade aberta. Volume máximo do dia. Só entre se tiver setup claro.", type: "ny" };
+  return null;
+}
+
+function getWindowMessage(
+  currentSessionName: string | null
+): { message: string; type: "ideal" | "good" | "caution" | "outside" } {
+  if (!currentSessionName) {
+    return {
+      message: "Nenhuma sessão ativa no momento. Use esse tempo para estudar o gráfico, revisar trades anteriores e preparar o plano de amanhã.",
+      type: "outside",
+    };
   }
-  return { message: "Fora da janela. Use esse tempo para estudar o gráfico, revisar trades anteriores e preparar o plano de amanhã.", type: "outside" };
+  switch (currentSessionName) {
+    case "Overlap Londres + Nova York":
+      return {
+        message: "✓ Janela de máxima qualidade aberta. Volume institucional no pico. Só entre se tiver setup claro e plano definido.",
+        type: "ideal",
+      };
+    case "Nova York Tarde":
+      return {
+        message: "✓ Sua janela está aberta. Mercado mais técnico e previsível. Boa hora para executar com disciplina.",
+        type: "ideal",
+      };
+    case "Fechamento NY":
+      return {
+        message: "Fechamento de NY. Institucional fecha posições — moves bruscos possíveis. Opere só com setup muito claro.",
+        type: "caution",
+      };
+    case "Sessão Londres":
+      return {
+        message: "Sessão de Londres ativa. Volume europeu presente, mas sem catalisador americano. Cuidado com reversões ao abrir NY.",
+        type: "good",
+      };
+    case "Sessão Asiática":
+    case "After Hours / Overnight":
+      return {
+        message: "Sessão de baixo volume. Spreads largos, fakeouts frequentes. Não é recomendado operar MES/MNQ agora.",
+        type: "outside",
+      };
+    default:
+      return {
+        message: "Fora da janela principal. Use esse tempo para estudar e preparar o plano.",
+        type: "outside",
+      };
+  }
 }
 
 // Timeline segments (24h bar)
 const timelineSegments = [
-  { label: "Asiática", start: 20, end: 26, color: "rgba(100,100,100,0.3)" }, // 8PM-2AM (26 = 2AM next day)
+  { label: "Asiática", start: 20, end: 26, color: "rgba(100,100,100,0.3)" },
   { label: "Londres", start: 3, end: 8.5, color: "rgba(200,180,50,0.2)" },
   { label: "Overlap", start: 8.5, end: 11, color: "rgba(38,166,154,0.4)" },
   { label: "NY Tarde", start: 13.5, end: 15.5, color: "rgba(200,200,200,0.25)" },
@@ -141,21 +177,25 @@ export default function Janelas() {
   const [etTimeStr, setEtTimeStr] = useState("");
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const tick = () => {
       const et = getETTime();
       setEtNow(et);
       setEtTimeStr(
-        et.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })
+        et.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })
       );
-    }, 1000);
-    const et = getETTime();
-    setEtTimeStr(
-      et.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })
-    );
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const windowMessage = getCurrentWindowMessage(etNow);
+  const currentSessionName = getCurrentSessionName(etNow);
+  const windowMessage = getWindowMessage(currentSessionName);
   const currentHourDecimal = etNow.getHours() + etNow.getMinutes() / 60;
 
   return (
@@ -168,7 +208,7 @@ export default function Janelas() {
               JANELAS DE MERCADO
             </h1>
             <p className="font-mono-title text-[11px] text-[var(--text-muted)] mt-1">
-              Horários em Eastern Time (New Jersey) · Futuros de Índice
+              Horários em Eastern Time (ET) · Futuros de Índice
             </p>
           </div>
           <div className="font-mono-title text-[14px] text-[var(--white)] tabular-nums">
@@ -177,19 +217,72 @@ export default function Janelas() {
         </div>
       </div>
 
+      {/* Current Window Banner */}
+      <div
+        className={`td-card-elevated border px-4 py-3 ${
+          windowMessage.type === "ideal"
+            ? "border-[var(--green)] bg-[var(--green-dim)]"
+            : windowMessage.type === "good"
+            ? "border-[var(--border-bright)] bg-[rgba(255,255,255,0.03)]"
+            : windowMessage.type === "caution"
+            ? "border-[rgba(255,200,50,0.5)] bg-[rgba(255,200,50,0.05)]"
+            : "border-[var(--border-color)]"
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          <span className="text-lg mt-0.5">
+            {windowMessage.type === "ideal"
+              ? "✅"
+              : windowMessage.type === "good"
+              ? "🟡"
+              : windowMessage.type === "caution"
+              ? "⚠️"
+              : "🔴"}
+          </span>
+          <div>
+            <p className="font-mono-title text-[10px] text-[var(--text-muted)] mb-1">
+              SUA JANELA ATUAL —{" "}
+              <span className="text-[var(--text-secondary)]">
+                {currentSessionName ?? "Nenhuma sessão ativa"}
+              </span>
+            </p>
+            <p
+              className={`font-sans-body text-[13px] leading-relaxed ${
+                windowMessage.type === "ideal"
+                  ? "text-[var(--green)]"
+                  : windowMessage.type === "good"
+                  ? "text-[var(--text-primary)]"
+                  : windowMessage.type === "caution"
+                  ? "text-[rgba(255,200,50,1)]"
+                  : "text-[var(--text-secondary)]"
+              }`}
+            >
+              {windowMessage.message}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Session Cards */}
       <div className="space-y-3">
         {sessions.map((session, i) => {
           const open = isSessionOpen(session, etNow);
-          const borderClass = session.highlight === "best"
-            ? "border-[var(--green)]"
-            : session.highlight === "yours"
+          const isCurrent = session.name === currentSessionName;
+
+          const borderClass = isCurrent
             ? "border-[var(--white)]"
+            : session.highlight === "best"
+            ? "border-[var(--green)]"
             : session.highlight === "avoid"
             ? "border-[var(--red)]"
             : "border-[var(--border-color)]";
 
-          const bgClass = session.highlight === "avoid" ? "bg-[var(--red-dim)]" : "bg-[var(--bg-surface)]";
+          const bgClass =
+            isCurrent
+              ? "bg-[rgba(255,255,255,0.04)]"
+              : session.highlight === "avoid"
+              ? "bg-[var(--red-dim)]"
+              : "bg-[var(--bg-surface)]";
 
           return (
             <div
@@ -204,15 +297,20 @@ export default function Janelas() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {session.badge && (
-                    <span className={`text-[9px] font-mono-title font-semibold px-2 py-0.5 ${
-                      session.highlight === "best"
-                        ? "bg-[var(--green-dim)] text-[var(--green)] border border-[var(--green)]"
-                        : session.highlight === "yours"
-                        ? "bg-[rgba(255,255,255,0.05)] text-[var(--white)] border border-[var(--white)] animate-pulse-green"
-                        : "bg-[var(--red-dim)] text-[var(--red)] border border-[var(--red)]"
-                    }`}>
-                      {session.badge}
+                  {/* Dynamic badges */}
+                  {isCurrent && (
+                    <span className="text-[9px] font-mono-title font-semibold px-2 py-0.5 bg-[rgba(255,255,255,0.05)] text-[var(--white)] border border-[var(--white)] animate-pulse-green">
+                      SUA JANELA ATUAL
+                    </span>
+                  )}
+                  {session.highlight === "best" && !isCurrent && (
+                    <span className="text-[9px] font-mono-title font-semibold px-2 py-0.5 bg-[var(--green-dim)] text-[var(--green)] border border-[var(--green)]">
+                      MELHOR JANELA
+                    </span>
+                  )}
+                  {session.highlight === "avoid" && (
+                    <span className="text-[9px] font-mono-title font-semibold px-2 py-0.5 bg-[var(--red-dim)] text-[var(--red)] border border-[var(--red)]">
+                      EVITAR
                     </span>
                   )}
                   {open ? (
@@ -231,9 +329,7 @@ export default function Janelas() {
                 <span className="font-mono-title text-[11px] text-[var(--text-secondary)]">
                   {session.openET} – {session.closeET} ET
                 </span>
-                <span className="text-[11px]">
-                  {"⭐".repeat(session.quality)}
-                </span>
+                <span className="text-[11px]">{"⭐".repeat(session.quality)}</span>
               </div>
 
               <p className="font-sans-body text-[12px] text-[var(--text-secondary)] leading-relaxed">
@@ -248,33 +344,18 @@ export default function Janelas() {
       <div className="td-card">
         <p className="td-label mb-4">TIMELINE DO DIA (24H ET)</p>
         <div className="relative h-10 bg-[var(--bg-base)] border border-[var(--border-color)] overflow-hidden">
-          {/* Segments */}
           {timelineSegments.map((seg) => {
-            let startPct: number;
-            let widthPct: number;
-
-            if (seg.start >= 20) {
-              // Wraps around midnight - show as two segments
-              startPct = (seg.start / 24) * 100;
-              widthPct = ((24 - seg.start + (seg.end > 24 ? seg.end - 24 : seg.end)) / 24) * 100;
-            } else {
-              startPct = (seg.start / 24) * 100;
-              widthPct = ((seg.end - seg.start) / 24) * 100;
-            }
-
+            const startPct = (seg.start / 24) * 100;
+            const endClamped = seg.end > 24 ? 24 : seg.end;
+            const widthPct = ((endClamped - seg.start) / 24) * 100;
             return (
               <div
                 key={seg.label}
                 className="absolute top-0 bottom-0"
-                style={{
-                  left: `${startPct}%`,
-                  width: `${widthPct}%`,
-                  background: seg.color,
-                }}
+                style={{ left: `${startPct}%`, width: `${widthPct}%`, background: seg.color }}
               />
             );
           })}
-
           {/* Current time marker */}
           <div
             className="absolute top-0 bottom-0 w-[2px] bg-[var(--white)] z-10"
@@ -283,8 +364,6 @@ export default function Janelas() {
             <div className="absolute -top-1 -left-1 w-1 h-1 bg-[var(--white)] rounded-full" />
           </div>
         </div>
-
-        {/* Hour labels */}
         <div className="flex justify-between mt-1.5">
           {[0, 4, 8, 12, 16, 20, 24].map((h) => (
             <span key={h} className="font-mono-title text-[9px] text-[var(--text-muted)]">
@@ -292,8 +371,6 @@ export default function Janelas() {
             </span>
           ))}
         </div>
-
-        {/* Legend */}
         <div className="flex flex-wrap gap-3 mt-3">
           {timelineSegments.map((seg) => (
             <div key={seg.label} className="flex items-center gap-1.5">
@@ -302,17 +379,6 @@ export default function Janelas() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Current Window Message */}
-      <div className={`td-card-elevated border ${
-        windowMessage.type === "ideal" ? "border-[var(--green)]" : windowMessage.type === "ny" ? "border-[var(--border-bright)]" : "border-[var(--border-color)]"
-      }`}>
-        <p className={`font-sans-body text-[14px] leading-relaxed ${
-          windowMessage.type === "ideal" ? "text-[var(--green)]" : windowMessage.type === "ny" ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
-        }`}>
-          {windowMessage.message}
-        </p>
       </div>
     </div>
   );
